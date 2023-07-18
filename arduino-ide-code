@@ -1,0 +1,96 @@
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+const char* ssid = "Yamir";
+const char* password = "yamir@2022";
+const char* mqtt_server = "35.154.214.132";
+const int mqtt_port = 1883; // default MQTT port
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+unsigned long lastMessageTime = 0;
+const unsigned long messageInterval = 15000; // Send a message every 15 seconds
+
+void setup() {
+  // Connect to WiFi
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  // Connect to MQTT broker
+  client.setServer(mqtt_server, mqtt_port);
+  client.setKeepAlive(30); // Set keepalive interval to 30 seconds
+  client.setCallback(callback);
+
+  while (!client.connected()) {
+    if (client.connect("ESP32Client")) {
+      Serial.println("Connected to MQTT broker");
+      // Send the first message immediately
+      client.publish("ayan", "starting connection");
+      lastMessageTime = millis();
+    } else {
+      Serial.print("Failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" Retrying in 5 seconds...");
+      delay(5000);
+    }
+  }
+}
+
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+
+  // Maintain the MQTT connection
+  client.loop();
+
+  // Check if it's time to send a message
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastMessageTime >= messageInterval) {
+    // Send a keep-alive message
+    client.publish("ayan", "");
+    lastMessageTime = currentMillis;
+  }
+
+  // Get user input
+  if (Serial.available() > 0) {
+    String userInput = Serial.readString();
+
+    // Publish the message
+    char message[50];
+    userInput.toCharArray(message, sizeof(message));
+
+    client.publish("ayan", message);
+    Serial.print("Published: ");
+    Serial.println(message);
+    lastMessageTime = currentMillis;
+  }
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.println("Attempting MQTT connection...");
+    if (client.connect("ESP32Client")) {
+      Serial.println("Connected to MQTT broker");
+      // Resubscribe to topics if needed
+      client.subscribe("ayan");
+    } else {
+      Serial.print("Failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" Retrying in 5 seconds...");
+      delay(5000);
+    }
+  }
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  // Handle incoming messages
+  // You can add your own logic here
+  Serial.println("Message received");
+}
+

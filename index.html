@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Data Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5; /* Off white background */
+      color: #333333; /* Black text color */
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center; /* Centered title */
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ffffff; /* White border */
+    }
+
+    #info {
+      font-size: 14px;
+      color: #666666; /* Light gray text color */
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('data', (data) => {
+      document.getElementById('data').textContent = data;
+    });
+  </script>
+</head>
+<body>
+  <h1>Real-time Data Display</h1>
+  <div id="data"></div>
+  <table id="info">
+    <tr>
+      <th>Server Protocol:</th>
+      <td>MQTT</td>
+    </tr>
+    <tr>
+      <th>Host:</th>
+      <td>3.110.163.72</td>
+    </tr>
+    <tr>
+      <th>Topic:</th>
+      <td>ayan</td>
+    </tr>
+    <tr>
+      <th>Developer:</th>
+      <td>Mohammad Ayan</td>
+    </tr>
+    <tr>
+      <th>Device:</th>
+      <td>ESP32</td>
+    </tr>
+    <tr>
+      <th>Communication:</th>
+      <td>Wi-Fi</td>
+    </tr>
+  </table>
+</body>
+</html>
