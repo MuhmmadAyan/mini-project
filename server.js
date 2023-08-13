@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 // MQTT broker configuration
-const brokerUrl = 'mqtt://35.154.214.132'; // Replace with your MQTT broker's IP address or hostname
+const brokerUrl = 'mqtt://15.206.127.21'; // Replace with your MQTT broker's IP address or hostname
 const topic = 'ayan'; // Replace with your desired topic
 
 // Create MQTT client
@@ -32,9 +32,11 @@ client.on('message', (topic, message) => {
   io.emit('data', receivedData.join('\n')); // Emit the received data to all connected clients
 });
 
+// Serve static files from the current directory
+app.use(express.static(__dirname));
 // Express route to serve the HTML page
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/new.html');
 });
 
 // Socket.IO connection event handler
@@ -51,5 +53,3 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-
