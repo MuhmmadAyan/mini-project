@@ -46,6 +46,14 @@
       padding: 6px;
     }
 
+    /* Style for the data display block */
+    #data-display {
+      border: 1px solid #ddd; /* Border around the block */
+      padding: 10px;
+      margin: 20px 0; /* Add margin top and bottom */
+      background-color: #ffffff; /* White background */
+    }
+
     .footer {
       text-align: center;
       margin-top: 20px;
@@ -84,9 +92,13 @@
     <div class="uni-name">Islamic University of Science and Technology</div>
   </div>
 
-  <h1>Data Received from ESP32:</h1>
-  
-  <div id="data"></div>
+  <h1>Data Received from ESP32</h1> <!-- Removed colon here -->
+
+  <!-- Data Display Block -->
+  <div id="data-display">
+    <h2>Received Data:</h2>
+    <div id="data"></div>
+  </div>
   
   <table class="developer-table">
     <tr>
