@@ -1,16 +1,16 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-const char* ssid = "Yamir";
-const char* password = "yamir@2022";
-const char* mqtt_server = "35.154.214.132";
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+const char* mqtt_server = "3.110.191.162";
 const int mqtt_port = 1883; // default MQTT port
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 unsigned long lastMessageTime = 0;
-const unsigned long messageInterval = 15000; // Send a message every 15 seconds
+const unsigned long messageInterval = 5000; // Send a message every 5 seconds
 
 void setup() {
   // Connect to WiFi
@@ -69,6 +69,9 @@ void loop() {
     Serial.print("Published: ");
     Serial.println(message);
     lastMessageTime = currentMillis;
+
+    // Add a delay before allowing the next user input
+    delay(1000);
   }
 }
 
@@ -93,4 +96,3 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // You can add your own logic here
   Serial.println("Message received");
 }
-
