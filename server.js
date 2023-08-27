@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 // MQTT broker configuration
-const brokerUrl = 'mqtt://15.206.127.21'; // Replace with your MQTT broker's IP address or hostname
+const brokerUrl = 'mqtt://3.110.191.162'; // Replace with your MQTT broker's IP address or hostname
 const topic = 'ayan'; // Replace with your desired topic
 
 // Create MQTT client
@@ -25,10 +25,7 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-  receivedData.push(message.toString());
-  if (receivedData.length > maxDataCount) {
-    receivedData.shift(); // Remove the oldest data if the maximum count is exceeded
-  }
+  receivedData = [message.toString()]; // Replace the existing data with the new data
   io.emit('data', receivedData.join('\n')); // Emit the received data to all connected clients
 });
 
