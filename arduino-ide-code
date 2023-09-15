@@ -1,10 +1,12 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <DHT.h>
 
-const char* ssid = "Wokwi-GUEST";
-const char* password = "";
+const char* ssid = "USMAN";
+const char* password = "usman123";
 const char* mqtt_server = "3.110.191.162";
 const int mqtt_port = 1883; // default MQTT port
+DHT dht(4, DHT11);
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -15,6 +17,7 @@ const unsigned long messageInterval = 5000; // Send a message every 5 seconds
 void setup() {
   // Connect to WiFi
   Serial.begin(115200);
+  dht.begin();
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
@@ -48,16 +51,36 @@ void loop() {
 
   // Maintain the MQTT connection
   client.loop();
+  
+  float h = dht.readHumidity();
+  char reading[10];
+  snprintf(reading, 10, "%.2f", h);
+
+  
+  float t = dht.readTemperature();
+  char Treading[10];
+  snprintf(Treading, 10, "%.2f", t);
+
+ char finalM[50];
+ snprintf(finalM, sizeof(finalM), "Humidity: %.2f Temperature: %.2f", h,t);
+  
+  
+  Serial.println(t);
+  
 
   // Check if it's time to send a message
   unsigned long currentMillis = millis();
   if (currentMillis - lastMessageTime >= messageInterval) {
     // Send a keep-alive message
     client.publish("ayan", "");
+    
     lastMessageTime = currentMillis;
   }
+  client.publish("ayan", finalM);
+ 
 
   // Get user input
+  /*
   if (Serial.available() > 0) {
     String userInput = Serial.readString();
 
@@ -65,14 +88,14 @@ void loop() {
     char message[50];
     userInput.toCharArray(message, sizeof(message));
 
-    client.publish("ayan", message);
+    client.publish("ayan", (char *) "hello");
     Serial.print("Published: ");
     Serial.println(message);
     lastMessageTime = currentMillis;
 
     // Add a delay before allowing the next user input
     delay(1000);
-  }
+  } */
 }
 
 void reconnect() {
